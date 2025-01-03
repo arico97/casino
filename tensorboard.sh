@@ -1,0 +1,1 @@
+tensorboard --logdir sport_bets/models/logs/fit
