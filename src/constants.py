@@ -1,5 +1,10 @@
 import datetime
 
+url_base = "https://www.football-data.co.uk/"
+
+
+# Make this automate on the encoding on feature engineer
+
 mapping = {'H': 0, 'D': 1, 'A': 2}
 
 teams_dict = {
