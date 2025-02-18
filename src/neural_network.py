@@ -149,7 +149,7 @@ class Neural_Network:
     def _train_model(self, 
                      X_train: np.ndarray, X_test: np.ndarray,
                      y_train: pd.Series, y_test: pd.Series, 
-                     ) -> None:
+                     callback = None) -> None:
         '''Train model using K-fold cross-validation.
 
         Arguments:
@@ -171,20 +171,25 @@ class Neural_Network:
                                 min_delta=0.001,     
                                 mode='min',
                                 restore_best_weights=True)
-        cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
-                                        save_weights_only=True,
-                                        verbose=1)
-        tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, 
-                                                              histogram_freq=1)
+        if callback is None:
+            cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
+                                            save_weights_only=True,
+                                            verbose=1)
+            tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, 
+                                                                histogram_freq=1)
+            callbacks = [early_stopping, cp_callback, tensorboard_callback]
+        else: 
+            callbacks = [early_stopping, callback]  
         X_train_fold, y_train_fold = X_train, y_train
         X_val_fold, y_val_fold = X_test, y_test
         self.input_shape = X_train_fold.shape[1:]
-        self._get_hyperparameters(X_train_fold, y_train_fold, X_val_fold, y_val_fold)
+        self._get_hyperparameters(X_train_fold, y_train_fold, 
+                                  X_val_fold, y_val_fold)
         self._create_model()
         self.model.fit(X_train_fold, y_train_fold, 
                     epochs=50, batch_size=8, 
                     verbose=1, 
-                    callbacks = [early_stopping, cp_callback, tensorboard_callback],
+                    callbacks = callbacks,
                     validation_data=(X_val_fold, y_val_fold))
         y_pred = self.model.predict(X_test)
         log_loss_fold = log_loss(y_test, y_pred)

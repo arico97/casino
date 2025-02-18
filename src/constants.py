@@ -4,6 +4,56 @@ url_base = "https://www.football-data.co.uk/"
 
 
 # Make this automate on the encoding on feature engineer
+column_name_mapping = {
+    'B365>2.5': 'Bet365Over25Goals',
+    'B365<2.5': 'Bet365Under25Goals',
+    'P>2.5': 'PinnacleOver25Goals',
+    'P<2.5': 'PinnacleUnder25Goals',
+    'Max>2.5': 'MaxOver25Goals',
+    'Max<2.5': 'MaxUnder25Goals',
+    'Avg>2.5': 'AverageOver25Goals',
+    'Avg<2.5': 'AverageUnder25Goals',
+    'BFE>2.5': 'BetfairExchangeOver25Goals',
+    'BFE<2.5': 'BetfairExchangeUnder25Goals',
+    '1XBCH': '1XBetHome',
+    '1XBCD': '1XBetDraw',
+    '1XBCA': '1XBetAway',
+    'HS': 'HomeShots',
+    'HST': 'HomeShotsOnTarget',
+    'HC': 'HomeCorners',
+    'HF': 'HomeFouls',
+    'HY': 'HomeYellowCards',
+    'HR': 'HomeRedCards',
+    'AS': 'AwayShots',
+    'AST': 'AwayShotsOnTarget',
+    'AC': 'AwayCorners',
+    'AF': 'AwayFouls',
+    'AY': 'AwayYellowCards',
+    'AR': 'AwayRedCards',
+    'FTHG': 'FullTimeHomeGoals',
+    'FTAG': 'FullTimeAwayGoals',
+    'FTR': 'FullTimeResult',
+    'HTHG': 'HalfTimeHomeGoals',
+    'HTAG': 'HalfTimeAwayGoals',
+    'HTR': 'HalfTimeResult',
+    'Date': 'MatchDate',
+    'Div': 'Division',
+    'Referee': 'MatchReferee',
+    'Attendance': 'MatchAttendance',
+    '>2.5': 'Over25Goals',
+    '<2.5': 'Under25Goals',
+    'B365C>2.5': 'Bet365Over25Goals',
+    'B365C<2.5': 'Bet365Under25Goals',
+    'PC>2.5': 'PinnacleOver25Goals',
+    'PC<2.5': 'PinnacleUnder25Goals',
+    'MaxC>2.5': 'MaxOver25Goals',
+    'MaxC<2.5': 'MaxUnder25Goals',
+    'AvgC>2.5': 'AverageOver25Goals',
+    'AvgC<2.5': 'AverageUnder25Goals',
+    'BFEC>2.5': 'BetfairExchangeOver25Goals',
+    'BFEC<2.5': 'BetfairExchangeUnder25Goals'
+}
+
 
 mapping = {'H': 0, 'D': 1, 'A': 2}
 

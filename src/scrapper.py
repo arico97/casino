@@ -1,18 +1,18 @@
 '''Scrapper module to scrape data from football-data.co.uk'''
 
 import pandas as pd
-import requests 
+import sqlite3
+import os
+
 
 from bs4 import BeautifulSoup
 import requests
 
-from io import StringIO 
-
-from typing import List
+from io import StringIO
 
 from constants import url_base
 
-
+# TODO: Add columns in db: country name, competition name, all with code
 def process_csv_from_url(url):
   """Process each line by removing consecutive commas from a url file.
 
@@ -83,15 +83,62 @@ def get_file_name(href: str):
     """
     file_name = href.split("/")[1:3]
     file_name = [file_name[i] for i in [1,0]]
-    file_name[0] = file_name[0].split('.')[0]
-    file_name[1] = file_name[1][0:2]+'_'+file_name[1][2:4]
+    competition = file_name[0].split('.')[0]
+    file_name[0] = competition
+    season1 = file_name[1][0:2]
+    season2 = file_name[1][2:4]
+    file_name[1] = season1 + '_' + season2
     file_name = '_'.join(file_name)
     file_name = file_name.split('.')[0]
-    return file_name
+    return file_name, season1, season2, competition
+
+def create_table(db_path: str, table_name: str, data: pd.DataFrame):    
+    """Create a SQLite database to store the data.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
+    try:
+        conn = sqlite3.connect(f"{db_path}/football.db")
+        cursor = conn.cursor()
+        columns = ', '.join([f"{col} {pd.api.types.infer_dtype(data[col])}" for col in data.columns])
+        columns = columns.replace('string', 'TEXT').replace('integer', 'INTEGER').replace('floating', 'REAL')
+        cursor.execute(f"""CREATE TABLE {table_name} ({columns})""")
+    except sqlite3.Error as e:
+        print(f"Error creating the database: {e}")
+    finally:
+        conn.close()
+
+def insert_data_to_db(data: pd.DataFrame, db_path: str, table_name: str):
+    """Insert data into the database.
+
+    Args:
+        data: The data to insert into the database.
+
+    Returns:
+        None
+    """
+    try:
+        conn = sqlite3.connect(f"{db_path}/football.db")
+        cols = "','".join([str(i) for i in data.columns.tolist()])
+        for _ , row in data.iterrows():
+            sql = f"INSERT INTO {table_name} ('{cols}') VALUES ({row.to_list()})"
+            conn.execute(sql)
+        conn.commit()
+    except sqlite3.Error as e:
+        print(f"Error inserting data into the database: {e}")
+    finally:
+        conn.close()
+
 
 
 #TODO: separate more code, save to db, https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_sql.html
-def scrape_data(country: str):
+# https://medium.com/analytics-vidhya/inserting-pandas-dataframes-into-database-using-insert-815f0e4e6361
+
+def scrape_data(country: str, data_folder: str, db_path: str):
     """Scrape data from football-data.co.uk for a list of countries.
 
     Args:
@@ -106,16 +153,33 @@ def scrape_data(country: str):
         for link in links:
             href = link.get("href")
             if href and href.endswith(".csv"):
-                file_name = get_file_name(href)
+                file_name, season1, season2, competition = get_file_name(href)
                 file_url = url_base + href
                 print(f"Downloading: {file_name}")
                 print(f"url: {file_url}")
                 if file_name == '0405_E0':
                     data = process_csv_from_url(file_url)
-                    data.to_csv(f'data/{file_name}.csv', index=False)
                 else:
                     data = pd.read_csv(file_url, sep = ',', encoding='cp1252')
-                    data.to_csv(f'data/{file_name}.csv', index=False)
+                data['Season'] = f"{season1}/{season2}"
+                data['League'] = competition
+                data.rename(columns={'AS': 'AwayShots', 'HS': 'HomeShots', 
+                                     'AST': 'AwayShotsTarget', 'HST': 'HomeShotsTarget',
+                                       'AC': 'AwayCorners', 'HC': 'HomeCorners', 
+                                       'AF': 'AwayFouls', 'HF': 'HomeFouls',
+                                         'AY': 'AwayYellow', 'HY': 'HomeYellow', 
+                                         'AR': 'AwayRed', 'HR': 'HomeRed'}, inplace=True)
+                # data.to_csv(f'{data_folder}/{file_name}.csv', index=False)
+                conn = sqlite3.connect(f"{db_path}/football.db")
+                cursor = conn.cursor()
+                cursor.execute(f"SELECT name FROM sqlite_master WHERE type='table' AND name='{country}'")
+                table_exists = cursor.fetchone()
+                if table_exists:
+                    insert_data_to_db(data, db_path, country)
+                else:
+                    create_table(db_path, country)
+                    insert_data_to_db(data, db_path, country)
+                conn.close()
     except requests.exceptions.RequestException as e:
         print(f"Error fetching the webpage: {e}")
     except Exception as e:

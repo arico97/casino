@@ -1,5 +1,9 @@
 from src import FootballData, FeatureEngineer, Neural_Network, new_prediction_prep  
 
+import mlflow
+from mlflow.tensorflow import MlflowCallback
+
+
 data_folder = './data'
 
 home_team = 'Real Madrid'
@@ -18,7 +22,11 @@ X_train, X_test, y_train, y_test = fe._prepare_data_pipeline()
 
 model = Neural_Network()
 
-model._train_model(X_train, X_test, y_train, y_test)
+mlflow.tensorflow.autolog(disable=True)
+
+with mlflow.start_run() as run:
+    model._train_model(X_train, X_test, y_train, y_test, 
+                       callback=MlflowCallback(run))
 
 X_pred = new_prediction_prep(fe, home_team, away_team, Season)
 
