@@ -7,20 +7,54 @@ To get started with this repository, follow these steps:
 
 1. **Clone the repository**:
     ```sh
-    git clone https://github.com/your-username/your-repo.git
+    git clone https://github.com/arico97/casino.git
+    cd RAG_summarizer 
     ```
-2. **Navigate to the project directory**:
-    ```sh
-    cd your-repo
-    ```
+2. **Set Up a Virtual Environment (optional but recommended)**:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
 3. **Install dependencies**:
     ```sh
-    npm install
+    pip install -r requirements.txt
     ```
-4. **Run the project**:
+
+## Test prediction
+To test the prediction model, follow these steps:
+
+1. **Edit `football_test.py`**:
+    Open the `football_test.py` file and edit the teams match to include the Spanish League teams you want to forecast. For example:
+    ```python
+        home_team = "Real Madrid"
+        away_team = "Barcelona"
+    ```
+
+
+2. **Run the test script**:
+    Use the provided `.py` script to execute the test and see the metrics log. You can choose the option when running the script. For example:
     ```sh
-    npm start
+    python football_test.py -o 1
     ```
+    or
+    ```sh
+    python football_test.py -o 2
+    ```
+    where ``-o 1`` is test the data with mlflow track and  ``-o 1`` with TensorBoard.
+
+3. **View the logged metrics**:
+    If using MLflow, you can view the logged metrics by running:
+    ```sh
+    ./mlflow_dashboard.sh
+    ```
+    If using TensorBoard (Tensorflow dashboard), run:
+    ```sh
+    ./tensorboard.sh
+    ```         
+    This will start a local server where you can view the metrics in your web browser.
+
+By following these steps, you can test the prediction model with your specified teams and track the performance metrics.
+
 
 ## Contributions Guide
 
@@ -56,6 +90,7 @@ This document provides a comprehensive guide to understanding the football data 
 
 - [Instructions Guide](#instructions-guide)
   - [Repository Instructions](#repository-instructions)
+  - [Test prediction](#test-prediction)
   - [Contributions Guide](#contributions-guide)
   - [Overview](#overview)
   - [Sections](#sections)

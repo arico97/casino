@@ -3,6 +3,12 @@ from src import FootballData, FeatureEngineer, Neural_Network, new_prediction_pr
 import mlflow
 from mlflow.tensorflow import MlflowCallback
 
+import argparse
+
+parser = argparse.ArgumentParser(description='Option to choose')
+parser.add_argument('-o', '--option', type=int)
+args = parser.parse_args()
+option = args.option
 
 data_folder = './data'
 
@@ -22,11 +28,13 @@ X_train, X_test, y_train, y_test = fe._prepare_data_pipeline()
 
 model = Neural_Network()
 
-mlflow.tensorflow.autolog(disable=True)
-
-with mlflow.start_run() as run:
-    model._train_model(X_train, X_test, y_train, y_test, 
-                       callback=MlflowCallback(run))
+if option == 1:
+    mlflow.tensorflow.autolog(disable=True)
+    with mlflow.start_run() as run:
+        model._train_model(X_train, X_test, y_train, y_test, 
+                        callback=MlflowCallback(run))
+if option == 2:
+    model._train_model(X_train, X_test, y_train, y_test)
 
 X_pred = new_prediction_prep(fe, home_team, away_team, Season)
 

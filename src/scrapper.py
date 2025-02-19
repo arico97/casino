@@ -12,6 +12,7 @@ from io import StringIO
 
 from constants import url_base
 
+# TODO: Seperate db functions into a separate file
 # TODO: Add columns in db: country name, competition name, all with code
 def process_csv_from_url(url):
   """Process each line by removing consecutive commas from a url file.
