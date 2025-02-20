@@ -26,12 +26,24 @@ To test the prediction model, follow these steps:
 1. **Edit `football_test.py`**:
     Open the `football_test.py` file and edit the teams match to include the Spanish League teams you want to forecast. For example:
     ```python
-        home_team = "Real Madrid"
-        away_team = "Barcelona"
+    home_team = "Real Madrid"
+    away_team = "Barcelona"
     ```
 
+1. **Set data scrapper**:
+    Add the following code on the previous file and personalize your country data.
+   ```python
+    from src.scrapper import scrape_data
+    db_path = './db/football.db'
+    data_folder = './data'
+    country = 'Spain'
 
-2. **Run the test script**:
+    scrape_data(country, data_folder, db_path)
+   ```
+   
+
+
+1. **Run the test script**:
     Use the provided `.py` script to execute the test and see the metrics log. You can choose the option when running the script. For example:
     ```sh
     python football_test.py -o 1
@@ -42,7 +54,7 @@ To test the prediction model, follow these steps:
     ```
     where ``-o 1`` is test the data with mlflow track and  ``-o 1`` with TensorBoard.
 
-3. **View the logged metrics**:
+1. **View the logged metrics**:
     If using MLflow, you can view the logged metrics by running:
     ```sh
     ./mlflow_dashboard.sh
@@ -52,6 +64,7 @@ To test the prediction model, follow these steps:
     ./tensorboard.sh
     ```         
     This will start a local server where you can view the metrics in your web browser.
+
 
 By following these steps, you can test the prediction model with your specified teams and track the performance metrics.
 
