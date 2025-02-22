@@ -80,9 +80,9 @@ class SqlLlm:
         # Collect and process the events/messages from the agent
         events_messages = []
         for event in events:
-            event["messages"][-1].pretty_print()  # Print the most recent message for debugging
+            # event["messages"][-1].pretty_print()  # Print the most recent message for debugging
             events_messages.append(event["messages"][-1])  # Collect the last message in the list
-            print(f"event: {event}")
+            # print(f"event: {event}")
         
         answer = events_messages[-1].content
         # Return the content of the last message in the sequence, which is the llm answer

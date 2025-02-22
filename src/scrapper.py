@@ -10,7 +10,7 @@ import requests
 
 from io import StringIO
 
-from constants import url_base
+from .constants import url_base
 
 # TODO: Seperate db functions into a separate file
 # TODO: Add columns in db: country name, competition name, all with code
@@ -108,10 +108,10 @@ def create_table(db_path: str, table_name: str, data: pd.DataFrame):
         columns = ', '.join([f"{col} {pd.api.types.infer_dtype(data[col])}" for col in data.columns])
         columns = columns.replace('string', 'TEXT').replace('integer', 'INTEGER').replace('floating', 'REAL')
         cursor.execute(f"""CREATE TABLE {table_name} ({columns})""")
+        conn.close()
     except sqlite3.Error as e:
         print(f"Error creating the database: {e}")
-    finally:
-        conn.close()
+        
 
 def insert_data_to_db(data: pd.DataFrame, db_path: str, table_name: str):
     """Insert data into the database.
@@ -129,11 +129,9 @@ def insert_data_to_db(data: pd.DataFrame, db_path: str, table_name: str):
             sql = f"INSERT INTO {table_name} ('{cols}') VALUES ({row.to_list()})"
             conn.execute(sql)
         conn.commit()
+        conn.close()
     except sqlite3.Error as e:
         print(f"Error inserting data into the database: {e}")
-    finally:
-        conn.close()
-
 
 
 #TODO: separate more code, save to db, https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_sql.html
