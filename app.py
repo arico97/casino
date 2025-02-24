@@ -47,11 +47,6 @@ def chatbot(request: ChatbotRequest):
     football_data._create_df_pipeline(request.data_folder)
     logging.info(football_data.df.columns)
     conn = sqlite3.connect(request.db_path, check_same_thread=False)
-    cursor = conn.cursor()
-    '''
-    create_table(request.db_path, request.table_db, football_data.df)
-    insert_data_to_db(football_data.df, request.db_path, request.table_db)
-    '''
     sql_llm = SqlLlm(conn)
     answer = sql_llm._create_answer(request.example_query)
     logging.info(answer)
