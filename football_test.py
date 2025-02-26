@@ -42,3 +42,7 @@ print(X_pred)
 prediction = model._predict(X_pred)
 print('prediction of model: ',prediction )
 print('quota: ', 1/prediction)
+
+
+
+

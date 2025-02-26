@@ -3,6 +3,8 @@ import sqlite3
 from src.sql_llm import SqlLlm 
 # from src.scrapper import scrape_data, insert_data_to_db, create_table
 from src import FootballData
+import sqlite3
+from src.sql_llm import SqlLlm
 
 example_query = "Who are the top 3 teams in SP1?"
 
@@ -26,3 +28,4 @@ sql_llm = SqlLlm(conn)
 answer = sql_llm._create_answer(example_query)
 print(answer)
 conn.close()
+
